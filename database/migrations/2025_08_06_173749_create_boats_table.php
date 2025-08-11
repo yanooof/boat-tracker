@@ -12,15 +12,24 @@ return new class extends Migration
     public function up()
         {
             Schema::create('boats', function (Blueprint $table) {
-                $table->id(); // Laravel ID (optional)
-                $table->string('boat_id')->unique();  // from JSON: "id"
-                $table->string('name');               // "na"
-                $table->decimal('latitude', 10, 7);   // "la"
-                $table->decimal('longitude', 10, 7);  // "lo"
-                $table->float('speed')->nullable();   // "sp"
-                $table->integer('heading')->nullable(); // "he"
-                $table->timestamp('datetime');        // "dt"
-                $table->string('contact')->nullable(); // "co"
+                $table->id();
+                $table->string('boat_id')->unique();
+
+                $table->string('name')->nullable();
+                $table->decimal('latitude', 10, 7)->nullable();
+                $table->decimal('longitude', 10, 7)->nullable();
+                $table->float('speed')->nullable();
+                $table->unsignedSmallInteger('heading')->nullable();
+
+                // If API timestamp might be missing or not ISO, make it nullable
+                $table->timestamp('datetime')->nullable();
+
+                $table->string('contact')->nullable();
+
+                // Not JSON for SQLite; store as TEXT (comma-joined or JSON string)
+                $table->text('atolls')->nullable();
+
+                $table->string('type')->nullable();
                 $table->timestamps();
             });
         }
