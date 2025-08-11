@@ -58,14 +58,14 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   let lastRefreshedAt = null;
-
+    //function for refreshing details on the status panel bottom left
     function updateStatusPanel() {
     const countEl = document.getElementById('statusCount');
     const refEl   = document.getElementById('statusRefreshed');
-    if (countEl) countEl.textContent = `${ALL_BOATS.length} boats`;
+    if (countEl) countEl.textContent = `${ALL_BOATS.length} Total unique boats`;
     if (refEl) {
     const t = lastRefreshedAt ? lastRefreshedAt.toLocaleString() : '—';
-    refEl.textContent = `Last refreshed: ${t}`;
+    refEl.textContent = `Last refreshed ${t}`;
     }
     }
 
@@ -104,10 +104,17 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   /*BOAT MARKER ICONS CONFIGURATION*/
-  const TYPE_COLORS = {
-    'supply boat':'#F94144','speed boat':'#277DA1','safari':'#F9C74F',
-    'landing craft':'#43AA8B','fishing boat':'#577590','dinghy':'#F3722C',
-    'excursion boat':'#90BE6D','boat':'#af2af2','tug boat':'#000000','default':'#adb5bd'
+  const TYPE_COLORS = { /*colors for boat markers based on boat type */
+    'supply boat': '#708090',     
+    'speed boat': '#FF4500',      
+    'safari': '#DAA520',          
+    'landing craft': '#556B2F',   
+    'fishing boat': '#1E90FF',    
+    'dinghy': '#FFD700',          
+    'excursion boat': '#2E8B57',  
+    'passenger ferry': '#4682B4',            
+    'tug boat': '#8B0000',        
+    'default': '#B0B0B0'          
   };
   const getBoatColor = (type) => TYPE_COLORS[type?.toLowerCase()] || TYPE_COLORS.default;
 
@@ -142,7 +149,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   const ATOLLS = ['HA','HDH','SH','N','R','B','LH','K','AA','ADH','V','M','F','DH','TH','L','GA','GDH','GN','S','MALECITY'];
-  const LOCATIONS = {"Malé":{lat:4.175,lon:73.509,radius:8},"Hulhumalé":{lat:4.226,lon:73.546,radius:8},"Gan (Addu)":{lat:-0.693,lon:73.155,radius:15},"Naifaru":{lat:5.444,lon:73.366,radius:10}};
+  const LOCATIONS = {"Malé":{lat:4.175,lon:73.509,radius:2},"Hulhumalé":{lat:4.226,lon:73.546,radius:4}};
   function haversine(a,b,c,d){const R=6371,toRad=x=>x*Math.PI/180;const dLat=toRad(c-a),dLon=toRad(d-b);const A=Math.sin(dLat/2)**2+Math.cos(toRad(a))*Math.cos(toRad(c))*Math.sin(dLon/2)**2;return 2*R*Math.asin(Math.sqrt(A));}
 
   /*FILTER SELECTION SIDEBAR */
@@ -308,7 +315,7 @@ window.addEventListener('DOMContentLoaded', () => {
     searchHandlersBound = true;
   }
 
-  /* ---- Filters drawer buttons ---- */
+  /*BUTTONS FOR FILTER SELECTION POPUP*/
   document.getElementById('filterBtn')?.addEventListener('click', ()=>{
     const el=document.getElementById('filterpopup');
     if(!el) return;
