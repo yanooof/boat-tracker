@@ -9,17 +9,19 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Promise\Utils;
 use App\Models\Boat;
 
+//to load data from db
 Route::get('/boats-data', function () {
     return Boat::select(
         'boat_id','name','latitude','longitude','speed','heading','datetime','contact','atolls','type'
     )->get();
 });
 
+//function to refresh boat locations every 30s
 Route::get('/refresh-boats', function () {
-    // rate-limit ~55s
+    // refresh limit: every 30 seconds
     $nowTs = now()->timestamp;
     $last  = Cache::get('boats_refresh_last', 0);
-    if ($nowTs - $last < 55) {
+    if ($nowTs - $last < 30) {
         return response()->json(['ok' => false, 'reason' => 'locked'], 200);
     }
     Cache::put('boats_refresh_last', $nowTs, 120);
@@ -31,7 +33,6 @@ Route::get('/refresh-boats', function () {
     ];
     $base = 'https://m.followme.mv/public/get_my.php?a=atoll&id=';
 
-    // Force IPv4, add UA, short timeouts
     $client = new Client([
         'timeout'         => 8.0,
         'connect_timeout' => 5.0,
@@ -44,7 +45,7 @@ Route::get('/refresh-boats', function () {
         'curl' => [
             CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
         ],
-        'verify' => false,   // DEV ONLY
+        'verify' => false,  
     ]);
 
     $promises = [];
@@ -55,7 +56,7 @@ Route::get('/refresh-boats', function () {
 
     $boats = [];
     $okAtolls = 0; $failAtolls = 0;
-    $errors = []; // collect reasons
+    $errors = []; 
 
     foreach ($settled as $atollCode => $result) {
         if ($result['state'] !== 'fulfilled') {
@@ -90,7 +91,6 @@ Route::get('/refresh-boats', function () {
                     'datetime'  => $b['dt'] ?? null,
                     'contact'   => $b['co'] ?? null,
                     'atolls'    => [$atollCode],
-                    'type'      => $b['ty'] ?? null, // keep nullable; API may not send
                 ];
             } else {
                 if (!in_array($atollCode, $boats[$boatId]['atolls'], true)) {
@@ -103,17 +103,14 @@ Route::get('/refresh-boats', function () {
                 if (($b['he'] ?? '') !== '') $boats[$boatId]['heading'] = (int)$b['he'];
                 if (!empty($b['na']))  $boats[$boatId]['name']    = $b['na'];
                 if (!empty($b['co']))  $boats[$boatId]['contact'] = $b['co'];
-                if (!empty($b['ty']))  $boats[$boatId]['type']    = $b['ty'];
             }
         }
     }
 
-    // Build payload for a single bulk UPSERT (SQLite-friendly)
     $payload = [];
     $now = now()->format('Y-m-d H:i:s');
 
     foreach ($boats as $boat) {
-        // Normalize datetime for SQLite: 'YYYY-MM-DD HH:MM:SS'
         $dt = $boat['datetime'] ?? null;
         if (is_numeric($dt)) {
             $dt = date('Y-m-d H:i:s', (int)$dt);
@@ -134,22 +131,19 @@ Route::get('/refresh-boats', function () {
             'datetime'  => $dt,
             'contact'   => $boat['contact']   ?? null,
             'atolls'    => implode(',', $boat['atolls'] ?? []),
-            'type'      => $boat['type']      ?? null,
         ];
     }
 
     $ops = 0; $dbErr = 0;
     try {
-        // 2nd arg = unique keys; 3rd arg = columns to update on conflict
         DB::table('boats')->upsert(
             $payload,
             ['boat_id'],
-            ['name','latitude','longitude','speed','heading','datetime','contact','atolls','type']
+            ['name','latitude','longitude','speed','heading','datetime','contact','atolls']
         );
         $ops = count($payload);
     } catch (\Throwable $e) {
         $dbErr = 1;
-        // Surface one DB error to help debug
         $errors['DB'] = $e->getMessage();
     }
 
@@ -168,7 +162,7 @@ Route::get('/refresh-boats', function () {
 
 Route::post('/user/map-style', function (Request $r) {
     if (!auth()->check()) return response()->json(['ok'=>false], 401);
-    $style = $r->input('style'); // not persisted yet
+    $style = $r->input('style'); 
     return ['ok'=>true];
 })->middleware('auth');
 
@@ -176,13 +170,13 @@ Route::post('/favorites/toggle', function (Request $r) {
     if (!auth()->check()) return response()->json(['ok'=>false], 401);
     $boatId = (string)$r->input('boat_id');
     $value  = (bool)$r->input('value');
-    // Stub: implement favorites table later
     return ['ok'=>true];
 })->middleware('auth');
 
-// Home + dashboard + profile (Breeze)
+// main page
 Route::view('/', 'main')->name('home');
 
+// dashboard
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
