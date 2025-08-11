@@ -30,7 +30,6 @@ return new class extends Migration
                 $table->text('atolls')->nullable();
 
                 $table->string('type')->nullable();
-                $table->timestamps();
             });
         }
 
