@@ -6,14 +6,8 @@
 
     <x-map.filters />
     <x-map.sidebar />
+    <x-map.statusbar/>
     <div class="zoom-indicator" id="zoomIndicator">Zoom: 7%</div>
-    <div id="statusPanel" class="status-panel">
-      <div><strong>Currently tracking:</strong></div>
-      <ul style="margin:6px 0 0 0; padding-left:16px;">
-        <li id="statusCount">— boats</li>
-        <li id="statusRefreshed">Last refreshed: —</li>
-      </ul>
-    </div>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="is-auth" content="{{ auth()->check() ? '1' : '0' }}">
