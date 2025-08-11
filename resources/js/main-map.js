@@ -354,6 +354,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }catch(e){ console.warn('refresh failed', e); }
   }
 
-  loadBoats();
-  setInterval(refreshCycle, 60000);
+  refreshCycle();
+  setInterval(refreshCycle, 30000);
 });
