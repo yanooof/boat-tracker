@@ -9,7 +9,7 @@
     </div>
     <button id="resetBtn" class="btn btn-reset">Reset</button>
     <button id="filterBtn" class="btn btn-filter">Filters</button>
-    <button id="listBtn", class="btn btn-list">List</button>
+    <button id="listBtn" class="btn btn-list">List</button>
     </div>
 
     <div class="layer-wrap">

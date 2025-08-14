@@ -6,6 +6,7 @@
 
     <x-map.filters />
     <x-map.sidebar />
+    <x-map.list />
     <x-map.statusbar/>
     <div class="zoom-indicator" id="zoomIndicator">Zoom: 7%</div>
 

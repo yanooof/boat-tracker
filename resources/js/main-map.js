@@ -329,6 +329,13 @@ window.addEventListener('DOMContentLoaded', () => {
     const el=document.getElementById('filterpopup'); if(el) el.style.display='none';
   });
 
+  /*BUTTONS FOR BOAT LIST*/
+  document.getElementById('listBtn')?.addEventListener('click', ()=>{
+    const el=document.getElementById('boatlist');
+    if(!el) return;
+    el.style.display = (el.style.display==='block') ? 'none' : 'block';
+  });
+
   /*FUNCTION TO FETCH AND REFRESH BOAT DATA TO DB*/
   async function loadBoats(){
     const res = await fetch('/boats-data');
