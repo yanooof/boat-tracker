@@ -330,11 +330,14 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   /*BUTTONS FOR BOAT LIST*/
-  document.getElementById('listBtn')?.addEventListener('click', ()=>{
-    const el=document.getElementById('boatlist');
-    if(!el) return;
-    el.style.display = (el.style.display==='block') ? 'none' : 'block';
-  });
+  // document.getElementById('listBtn')?.addEventListener('click', ()=>{
+  //   const el=document.getElementById('boatlist');
+  //   if(!el) return;
+  //   el.style.display = (el.style.display==='block') ? 'none' : 'block';
+  // });
+  // document.getElementById('closeList')?.addEventListener('click', ()=>{
+  //   const el=document.getElementById('boatlist'); if(el) el.style.display='none';
+  // });
 
   /*FUNCTION TO FETCH AND REFRESH BOAT DATA TO DB*/
   async function loadBoats(){

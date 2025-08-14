@@ -1,3 +1,6 @@
 <div id="boatlist" class="list">
-This is the list.
+	<div class="row">
+		<strong>Boat List</strong>
+		<button id="closeList" class="x">✕</button>
+	</div>
 </div>
