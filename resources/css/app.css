@@ -103,6 +103,10 @@ html, body {
     background: #374151;
 }
 
+.btn-list {
+    background: #4B5563;
+}
+
 .layer-wrap {
     position: relative;
 }
