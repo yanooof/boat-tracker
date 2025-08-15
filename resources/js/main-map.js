@@ -237,7 +237,9 @@ window.addEventListener('DOMContentLoaded', () => {
     const bodyEl = document.getElementById('sbBody');
     const wrapEl = document.getElementById('boatSidebar');
     const favBtn = document.getElementById('favToggle');
-    if (!nameEl || !bodyEl || !wrapEl || !favBtn) return;
+    const listClosed = document.getElementById('boatlist').style.display === 'none';
+
+    if (!nameEl || !bodyEl || !wrapEl || !favBtn || !listClosed) return;
 
     nameEl.textContent = b.name ?? 'Boat';
     bodyEl.innerHTML = `
@@ -260,12 +262,69 @@ window.addEventListener('DOMContentLoaded', () => {
     const closeBtn = document.getElementById('closeSidebar');
     if (closeBtn) {
     closeBtn.onclick = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        wrapEl.style.display = 'none';
+      e.preventDefault();
+      e.stopPropagation();
+      closeSidebar();
     };
     }
     wrapEl.style.display = 'block';
+  }
+
+  /*FUNCTION TO CLOSE SIDEBAR*/
+  function closeSidebar(){
+    const el = document.getElementById('boatSidebar')
+    el.style.display = 'none';
+  }
+
+  /*FUNCTION TO LIST BOATS*/
+  function listBoats(list){
+    let listItems = "";
+    let favIds = new Map();
+    const bodyEl = document.querySelector(".list-body");
+
+    list.forEach(b=>{
+      currentBoat = b;
+      const speed = parseFloat(b.speed)||0;
+      const updated = timeAgo(b.datetime).text;
+      const favId =  "favToggle-" + b.boat_id;
+
+      closeSidebar();
+
+      favIds.set(b.boat_id, "favToggle-" + b.boat_id);
+
+      if (!bodyEl) return;
+
+      listItems += `
+        <li>
+        <hr style="border-color:#374151; margin:10px 0;">
+        <div><b>Name:</b>${b.name ?? 'Boat'}</div>
+        <div><b>Contact:</b>${b.contact ?? '—'}</div>
+        <div><b>Speed:</b> ${speed.toFixed(1)} kn</div>
+        <div><b>Last updated:</b> ${updated}</div>
+        <div><b>Boat type:</b> ${b.type ?? '—'}</div>
+        <div><b>Travel regions (Atolls):</b> ${(Array.isArray(b.atolls)?b.atolls:(b.atolls||'').toString()).toString()}</div>
+        <div id=${favId} class="fav-btn">Add to favorites</div>
+        </li>
+      `;
+      })
+
+      bodyEl.innerHTML = listItems;
+
+      favIds.forEach((favId, id)=>{
+        const favBtn = document.getElementById(favId);
+        const fav = isFav(id);
+        favBtn.textContent = fav ? 'Remove favorite' : 'Add to favorites';
+
+        favBtn.classList.toggle('is-fav', fav);
+
+        favBtn.onclick = async ()=>{
+          const next = !isFav(id);
+          await favToggle(id, next);
+          favBtn.textContent = next ? 'Remove favorite' : 'Add to favorites';
+          favBtn.classList.toggle('is-fav', next);
+          if (document.getElementById('favOnly')?.checked) renderMarkers(applyFilters(ALL_BOATS));
+        };
+      })
   }
 
   /*SEARCH BAR FUNCTIONS */
@@ -330,14 +389,15 @@ window.addEventListener('DOMContentLoaded', () => {
   });
 
   /*BUTTONS FOR BOAT LIST*/
-  // document.getElementById('listBtn')?.addEventListener('click', ()=>{
-  //   const el=document.getElementById('boatlist');
-  //   if(!el) return;
-  //   el.style.display = (el.style.display==='block') ? 'none' : 'block';
-  // });
-  // document.getElementById('closeList')?.addEventListener('click', ()=>{
-  //   const el=document.getElementById('boatlist'); if(el) el.style.display='none';
-  // });
+  document.getElementById('listBtn')?.addEventListener('click', ()=>{
+    const el=document.getElementById('boatlist');
+    if(!el) return;
+    el.style.display = (el.style.display==='block') ? 'none' : 'block';
+    listBoats(ALL_BOATS);
+  });
+  document.getElementById('closeList')?.addEventListener('click', ()=>{
+    const el=document.getElementById('boatlist'); if(el) el.style.display='none';
+  });
 
   /*FUNCTION TO FETCH AND REFRESH BOAT DATA TO DB*/
   async function loadBoats(){

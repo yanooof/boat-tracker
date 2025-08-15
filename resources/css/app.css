@@ -239,6 +239,7 @@ html, body {
 }
 
 .fav-btn {
+    width: 140px;
     border: none;
     border-radius: 10px;
     padding: 8px 10px;
