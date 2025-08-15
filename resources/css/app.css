@@ -291,5 +291,9 @@ html, body {
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
     z-index: 1300;
     display: none;
+}
+
+.list-container{
+    max-height: 88vh;
     overflow-y: scroll;
 }
