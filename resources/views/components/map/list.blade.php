@@ -4,6 +4,6 @@
 		<button id="closeList" class="x">✕</button>
 	</div>
 	<div class="list-container">
-		<ul class="list-body"></ul>
+		<ol class="list-body"></ol>
 	</div>
 </div>
