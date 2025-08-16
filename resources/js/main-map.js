@@ -290,7 +290,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
       closeSidebar();
 
-      favIds.set(b.boat_id, "favToggle-" + b.boat_id);
+      favIds.set(b.boat_id, favId);
 
       if (!bodyEl) return;
 
